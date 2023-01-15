@@ -1,7 +1,8 @@
 import React, { useContext, useState } from 'react';
 import sha1 from 'crypto-js/sha1';
 import { Alert, Button, Card, Form } from 'react-bootstrap';
-import { appContext, questionSet } from '../App';
+import { appContext } from '../state/context';
+import { questionSet } from '../types/type';
 
 type props = {
 	questionSet: questionSet;
@@ -20,7 +21,7 @@ export default function Playboard({ questionSet }: props) {
 			setErrorText('Provide an Answer to Continue.');
 			return;
 		}
-		const userAnsHash = sha1(input).toString();
+		const userAnsHash = sha1(input.toLowerCase().trim()).toString();
 		if (questionSet.answerSha1 === userAnsHash || input === 'gs') {
 			setShowError(false);
 			setErrorText('');
@@ -56,7 +57,7 @@ export default function Playboard({ questionSet }: props) {
 					e.key === 'Enter' && submit();
 				}}
 				onChange={(e) => {
-					setInput(e.target.value.toLowerCase().trim());
+					setInput(e.target.value);
 				}}
 			/>
 			{showError && (

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Alert, Stack } from 'react-bootstrap';
-import { appContext } from '../App';
+import { appContext } from '../state/context';
 
 export default function ScoreBoard() {
 	let { score, lives } = useContext(appContext);

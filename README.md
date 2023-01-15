@@ -3,8 +3,11 @@
 ## The task
 It is a quiz game in the form of a browser application.
 
-The API is available at `GET https://eok9ha49itquif.m.pipedream.net` and returns questions in the following format:
+> Variables file is present in `src/config/constants`
 > I have my own copy of my API as original keep on returning `Workflow Error`. my personal API copy @ `https://eolnq9n0ealtrwh.m.pipedream.net/`
+>>Project is having a optimised API calling method which reduces load on sever by polling only when data is required.
+
+The API is available at `GET https://eok9ha49itquif.m.pipedream.net` and returns questions in the following format:
 ```json
 {
   "questions": [

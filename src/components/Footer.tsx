@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Button } from 'react-bootstrap';
-import { appContext } from '../App';
+import { appContext } from '../state/context';
 
 export default function Footer() {
 	let { isDark, setIsDark } = useContext(appContext);
