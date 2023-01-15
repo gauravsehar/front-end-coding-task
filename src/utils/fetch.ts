@@ -8,7 +8,7 @@ export default async function fetchData(useMock: boolean) {
 			return new Promise<questionSets>((resolve) => {
 				setTimeout(() => {
 					resolve(mockApi);
-				}, 500);
+				}, 0);
 			});
 		} else {
 			const resp = await fetch(API_URL);

@@ -39,7 +39,7 @@ export default function Playboard({ questionSet }: props) {
 	};
 	return (
 		<Form>
-			<Form.Label className='mb-3 w-100'>
+			<Form.Label className='mb-3 w-100' data-testid="question-text">
 				<Card>
 					<Card.Body>
 						<strong>Question {dispQuesIndex + 1}:</strong>{' '}
@@ -49,6 +49,7 @@ export default function Playboard({ questionSet }: props) {
 			</Form.Label>
 			<Form.Control
 				className='mb-1'
+				data-testid="answer-input"
 				type='answer'
 				placeholder='Answer'
 				value={input}
