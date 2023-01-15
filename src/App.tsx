@@ -1,5 +1,4 @@
 import React, { createContext, useEffect, useState } from 'react';
-import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Card, Container } from 'react-bootstrap';
 import Title from './components/Title';
@@ -25,6 +24,8 @@ export type AppContext = {
 	setScore: Function;
 	lives: number;
 	setLives: Function;
+	isDark: Boolean;
+	setIsDark: Function;
 };
 
 export const appContext = createContext<AppContext>({
@@ -36,6 +37,8 @@ export const appContext = createContext<AppContext>({
 	setScore: () => {},
 	lives: 3,
 	setLives: () => {},
+	isDark: false,
+	setIsDark: () => {},
 });
 
 async function fetchData() {
@@ -68,6 +71,15 @@ function App() {
 	const [gameOver, setGameOver] = useState<Boolean>(false);
 	const [score, setScore] = useState<number>(0);
 	const [lives, setLives] = useState<number>(3);
+	const [isDark, setIsDark] = useState(false);
+
+	useEffect(() => {
+		if (isDark) {
+			document.body.classList.add('dark');
+		} else {
+			document.body.classList.remove('dark');
+		}
+	}, [isDark]);
 
 	useEffect(() => {
 		if (
@@ -104,6 +116,8 @@ function App() {
 				setScore,
 				lives,
 				setLives,
+				isDark,
+				setIsDark,
 			}}
 		>
 			<Container className='text-center'>
