@@ -65,6 +65,7 @@ function App() {
 				setLives,
 				isDark,
 				setIsDark,
+				setQuestionSets,
 			}}
 		>
 			<Container className='text-center'>

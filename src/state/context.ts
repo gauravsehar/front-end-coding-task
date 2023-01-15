@@ -1,5 +1,5 @@
-import { createContext } from "react";
-import { LIVES } from "../config/constants";
+import { createContext } from 'react';
+import { LIVES } from '../config/constants';
 
 export type AppContext = {
 	dispQuesIndex: number;
@@ -12,6 +12,7 @@ export type AppContext = {
 	setLives: Function;
 	isDark: Boolean;
 	setIsDark: Function;
+	setQuestionSets: Function;
 };
 
 export const appContext = createContext<AppContext>({
@@ -25,4 +26,5 @@ export const appContext = createContext<AppContext>({
 	setLives: () => {},
 	isDark: false,
 	setIsDark: () => {},
+	setQuestionSets: () => {},
 });
