@@ -1,60 +1,131 @@
-import React from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Alert, Button, Container, Form, Stack, Card } from 'react-bootstrap';
+import { Card, Container } from 'react-bootstrap';
+import Title from './components/Title';
+import Playboard from './components/Playboard';
+import GameOver from './components/GameOver';
+import Footer from './components/Footer';
+import { mockApi } from './mockData';
+import ScoreBoard from './components/ScoreBoard';
+
+export type questionSet = {
+	question: string;
+	answerSha1: string;
+};
+
+type questionSets = questionSet[];
+
+export type AppContext = {
+	dispQuesIndex: number;
+	setDispQuesIndex: Function;
+	gameOver: Boolean;
+	setGameOver: Function;
+	score: number;
+	setScore: Function;
+	lives: number;
+	setLives: Function;
+};
+
+export const appContext = createContext<AppContext>({
+	dispQuesIndex: 0,
+	setDispQuesIndex: () => {},
+	gameOver: false,
+	setGameOver: () => {},
+	score: 0,
+	setScore: () => {},
+	lives: 3,
+	setLives: () => {},
+});
+
+async function fetchData() {
+	try {
+		// const resp = await fetch('https://eolnq9n0ealtrwh.m.pipedream.net/');
+		// const { questions } = await resp.json();
+		// return questions;
+
+		return new Promise<questionSets>((resolve) => {
+			setTimeout(() => {
+				resolve(mockApi);
+			}, 500);
+		});
+	} catch (err) {
+		return ['Error', err];
+	}
+}
+
+function getUnique(currQuesSet: questionSets, newQuesSet: questionSets) {
+	return Array.from(
+		[...currQuesSet, ...newQuesSet]
+			.reduce((acc, curr) => acc.set(curr.question, curr), new Map())
+			.values()
+	);
+}
 
 function App() {
+	const [questionSets, setQuestionSets] = useState<questionSets>([]);
+	const [dispQuesIndex, setDispQuesIndex] = useState<number>(0);
+	const [gameOver, setGameOver] = useState<Boolean>(false);
+	const [score, setScore] = useState<number>(0);
+	const [lives, setLives] = useState<number>(3);
+
+	useEffect(() => {
+		if (
+			questionSets.length === 0 ||
+			dispQuesIndex + 1 === questionSets.length
+		) {
+			(async () => {
+				const data: any = await fetchData();
+				if (data.includes('Error')) {
+					console.log(data[1]);
+					alert(`Server Error 500: ${data[1]}`);
+				} else {
+					const q = getUnique(questionSets, data);
+					setQuestionSets(q);
+				}
+			})();
+		}
+	}, [dispQuesIndex]);
+
+	useEffect(() => {
+		if (lives === 0) setGameOver(true);
+		else if (dispQuesIndex === questionSets.length) setGameOver(true);
+		else setGameOver(false);
+	});
+
 	return (
-		<Container className='text-center' data-bs-theme='dark'>
-			<div className='border mt-2 p-4 rounded shadow-sm'>
-				<h1 className='mb-3'>Sauce Labs Coding Task</h1>
-				<Form>
-					<Stack direction='horizontal' gap={3}>
-						<Alert className='w-50 p-2' key={'success'} variant={'success'}>
-							<strong>Score: </strong>50
-						</Alert>
-						<Alert className='w-50 p-2' key={'warning'} variant={'warning'}>
-							<strong>Lives: </strong>3
-						</Alert>
-					</Stack>
-					<Form.Label className='mb-3 w-100'>
-						<Card>
-							<Card.Body>
-								<strong>Question:</strong> Atlantic __________ are able to leap
-								15 feet high. Lorem ipsum dolor, sit amet consectetur
-								adipisicing elit. Dolore veritatis asperiores alias quam harum,
-								sequi aspernatur voluptates iste, nesciunt error quisquam quae
-								aut earum, repellendus illum quis. Esse, illum ad. Lorem ipsum
-								dolor sit, amet consectetur adipisicing elit. A doloremque
-								magnam accusamus maiores commodi ut quidem, possimus esse
-								aspernatur, enim culpa voluptate corporis itaque! Doloribus
-								commodi alias debitis quidem eum?
-							</Card.Body>
-						</Card>
-					</Form.Label>
-					<Form.Control className='mb-1' type='answer' placeholder='Answer' />
-					<Alert className='p-0' key={'danger'} variant={'danger'}>
-						Alert Text
-					</Alert>
-					<Button className='mb-1' variant='primary' type='submit'>
-						Submit
-					</Button>
-				</Form>
-				<Card className='m-5'>
-					<h2 className='p-5'>
-						Your Final Score: <strong>30</strong>
-					</h2>
-					<Button className='m-5' variant='primary' size='lg'>
-						Play Again?
-					</Button>
-				</Card>
-				<div className='text-end'>
-					<Button variant='outline-dark' size='sm'>
-						Dark
-					</Button>
-				</div>
-			</div>
-		</Container>
+		<appContext.Provider
+			value={{
+				dispQuesIndex,
+				setDispQuesIndex,
+				gameOver,
+				setGameOver,
+				score,
+				setScore,
+				lives,
+				setLives,
+			}}
+		>
+			<Container className='text-center'>
+				{questionSets.length > 0 ? (
+					<div className='border mt-2 p-4 rounded shadow-sm'>
+						<Title />
+						{!gameOver && (
+							<>
+								<ScoreBoard />
+								<Playboard questionSet={questionSets[dispQuesIndex]} />
+							</>
+						)}
+						{gameOver && <GameOver />}
+						<Footer />
+					</div>
+				) : (
+					<Card>
+						<Card.Body>Waiting for API Response.</Card.Body>
+					</Card>
+				)}
+			</Container>
+		</appContext.Provider>
 	);
 }
 
